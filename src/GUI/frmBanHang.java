@@ -781,7 +781,7 @@ public class frmBanHang extends javax.swing.JFrame {
         if (!jTextField1.getText().equalsIgnoreCase("") && cthdList.size() > 0) {
             Float tienDua = Float.parseFloat(jTextField1.getText());
             if (tienDua > this.tongtien) {
-                if (true) {
+                if (pay()) {
                     JOptionPane.showMessageDialog(this, "Lập Hóa Đơn Thành Công");
                     dtm_bill = new DefaultTableModel();
                     dtm_bill.addColumn("Mã Sản Phẩm");
