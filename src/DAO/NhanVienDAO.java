@@ -7,6 +7,7 @@ package DAO;
 
 import OBJ.ChiNhanh;
 import OBJ.NhanVien;
+import UTILS.MD5;
 import UTILS.MySQLConnection;
 import UTILS.SQLServerConnection;
 import java.sql.Connection;
@@ -206,10 +207,10 @@ public class NhanVienDAO {
                     + " inner join dbo.role r on r.id = u.role_id "
                     + " inner join dbo.site s on s.id = u.site_id"
                     + " WHERE u.username = ? AND u.password = ?"
-                    + " and r.code = 'ROLE_EMPLOYEE' and s.code = 'SITE_HANOI'");
+                    + " and r.code = 'ROLE_EMPLOYEE'");
 
             stm.setString(1, manv);
-            stm.setString(2, pass);
+            stm.setString(2, MD5.hash(pass));
 
             ResultSet rs = stm.executeQuery();
 

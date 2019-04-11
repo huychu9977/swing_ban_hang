@@ -781,7 +781,7 @@ public class frmBanHang extends javax.swing.JFrame {
         if (!jTextField1.getText().equalsIgnoreCase("") && cthdList.size() > 0) {
             Float tienDua = Float.parseFloat(jTextField1.getText());
             if (tienDua > this.tongtien) {
-                if (pay()) {
+                if (true) {
                     JOptionPane.showMessageDialog(this, "Lập Hóa Đơn Thành Công");
                     dtm_bill = new DefaultTableModel();
                     dtm_bill.addColumn("Mã Sản Phẩm");
@@ -790,6 +790,11 @@ public class frmBanHang extends javax.swing.JFrame {
                     dtm_bill.addColumn("Số Lượng");
                     dtm_bill.addColumn("Thành Tiền");
                     tbl_bill.setModel(dtm_bill);
+                    
+                    tbl_kh.setModel(new DefaultTableModel());
+                    txt_searchKH.setText("");
+                    tbl_sp.setModel(new DefaultTableModel());
+                    txt_searchSP.setText("");
                     lb_makh.setText("......");
                     lb_diachi.setText("......");
                     lb_email.setText("......");

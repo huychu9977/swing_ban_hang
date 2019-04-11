@@ -9,6 +9,7 @@ import OBJ.LoaiSanPham;
 import OBJ.NhaXuatBan;
 import OBJ.SanPham;
 import OBJ.TacGia;
+import UTILS.CONSTANT;
 import UTILS.MySQLConnection;
 import UTILS.SQLServerConnection;
 import java.sql.Connection;
@@ -62,7 +63,6 @@ public class SanPhamDAO {
 //        } catch (SQLException ex) {
 //            Logger.getLogger(SanPhamDAO.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-
         return spList;
     }
 
@@ -75,15 +75,16 @@ public class SanPhamDAO {
 
             Statement stm = conn.createStatement();
 
-            ResultSet rs = stm.executeQuery("SELECT sp.*, t.name as loaiSP, a.name as tacGia, p.name as nhaXuatBan FROM dbo.book sp\n"
-                    + "INNER JOIN dbo.type t ON sp.type_id = t.id\n"
-                    + "INNER JOIN dbo.author a ON sp.author_id = a.id\n"
-                    + "INNER JOIN dbo.publisher p ON sp.publisher_id = p.id\n"
-                    + "WHERE sp.code LIKE '%" + input + "%' or sp.name LIKE '%" + input + "%'");
+            ResultSet rs = stm.executeQuery("SELECT sp.code, sp.name, sp.price, t.name as loaiSP, a.name as tacGia, p.name as nhaXuatBan, sb.quantity FROM dbo.book sp\n"
+                    + "                    INNER JOIN dbo.type t ON sp.type_id = t.id\n"
+                    + "                    INNER JOIN dbo.author a ON sp.author_id = a.id\n"
+                    + "                    INNER JOIN dbo.publisher p ON sp.publisher_id = p.id\n"
+                    + "					INNER JOIN dbo.[site_book] sb ON sb.book_id = sp.id\n"
+                    + "					INNER JOIN dbo.[site] s ON s.id = sb.site_id\n"
+                    + "                    WHERE sb.quantity > 0 and ( sp.code LIKE '%" + input + "%' or sp.name LIKE '%" + input + "%' ) and s.code = '" + CONSTANT.site + "'");
 
             while (rs.next()) {
                 SanPham sp = new SanPham();
-
                 sp.setMaSanPham(rs.getString("code"));
                 sp.setTenSanPham(rs.getString("name"));
                 sp.setDonGia(rs.getFloat("price"));
@@ -152,11 +153,12 @@ public class SanPhamDAO {
             Connection conn = null;
             conn = SQLServerConnection.getSQLServerConnection();
 
-            PreparedStatement stm = conn.prepareStatement("UPDATE dbo.book SET name = ?, quantity = ?, price = ? WHERE code = ?");
-            stm.setString(1, spOBJ.getTenSanPham());
-            stm.setLong(2, spOBJ.getSoLuong());
-            stm.setFloat(3, spOBJ.getDonGia());
-            stm.setString(4, spOBJ.getMaSanPham());
+            PreparedStatement stm = conn.prepareStatement("update [dbo].[site_book] set quantity = ? where book_id = (select b.id from dbo.book b where b.code = ?) "
+                    + "and site_id = (select s.id from dbo.[site] s where s.code = ?)");
+
+            stm.setLong(1, spOBJ.getSoLuong());
+            stm.setString(3, CONSTANT.site);
+            stm.setString(2, spOBJ.getMaSanPham());
             stm.execute();
             return true;
         } catch (ClassNotFoundException | SQLException ex) {
@@ -188,8 +190,12 @@ public class SanPhamDAO {
 
             Connection conn = SQLServerConnection.getSQLServerConnection();
 
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM dbo.book WHERE code  = ?");
+            PreparedStatement stm = conn.prepareStatement("SELECT sp.id, sp.code, sp.name, sp.price, sb.quantity FROM dbo.book sp\n"
+                    + "					INNER JOIN dbo.[site_book] sb ON sb.book_id = sp.id\n"
+                    + "					INNER JOIN dbo.[site] s ON s.id = sb.site_id\n"
+                    + "                    WHERE sp.code = ? and s.code = ?");
             stm.setString(1, maSP);
+            stm.setString(2, CONSTANT.site);
             ResultSet rs = stm.executeQuery();
 
             while (rs.next()) {
