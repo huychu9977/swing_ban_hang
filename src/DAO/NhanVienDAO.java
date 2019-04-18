@@ -211,7 +211,6 @@ public class NhanVienDAO {
 
             stm.setString(1, manv);
             stm.setString(2, MD5.hash(pass));
-
             ResultSet rs = stm.executeQuery();
 
             if (rs.next()) {

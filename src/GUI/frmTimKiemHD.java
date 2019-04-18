@@ -43,6 +43,23 @@ public class frmTimKiemHD extends javax.swing.JFrame {
         this.tk = tk;
         this.ten = ten;
         this.ma = ma;
+        listHD = hdDAO.searchData("");
+            DefaultTableModel dtm = new DefaultTableModel();
+            dtm.addColumn("Mã hóa đơn");
+            dtm.addColumn("Ngày tạo");
+            dtm.addColumn("Khách hàng");
+            dtm.addColumn("Người tạo");
+            dtm.addColumn("Tổng tiền");
+            for (HoaDon hd : listHD) {
+                Vector vt = new Vector();
+                vt.add(hd.getMaHD());
+                vt.add(hd.getNgayTao());
+                vt.add(hd.getKhachHang().getTenKhachHang());
+                vt.add(hd.getNguoiTao().getTenNhanVien());
+                vt.add(hd.getTongTien() + " ₫");
+                dtm.addRow(vt);
+            }
+            jTable1.setModel(dtm);
     }
 
     NumberFormat formatter = new DecimalFormat("###,###");

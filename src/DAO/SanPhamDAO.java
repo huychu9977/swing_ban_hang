@@ -75,7 +75,7 @@ public class SanPhamDAO {
 
             Statement stm = conn.createStatement();
 
-            ResultSet rs = stm.executeQuery("SELECT sp.code, sp.name, sp.price, t.name as loaiSP, a.name as tacGia, p.name as nhaXuatBan, sb.quantity FROM dbo.book sp\n"
+            ResultSet rs = stm.executeQuery("SELECT sp.code, sp.name, sp.price, t.name as loaiSP, a.name as tacGia, p.name as nhaXuatBan, sb.quantity as quantity FROM dbo.book sp\n"
                     + "                    INNER JOIN dbo.type t ON sp.type_id = t.id\n"
                     + "                    INNER JOIN dbo.author a ON sp.author_id = a.id\n"
                     + "                    INNER JOIN dbo.publisher p ON sp.publisher_id = p.id\n"

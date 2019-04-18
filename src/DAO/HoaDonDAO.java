@@ -35,7 +35,12 @@ public class HoaDonDAO {
             PreparedStatement stm = conn.prepareStatement("INSERT INTO dbo.[order] (code, customer_id, status, created_date, created_by, sale_type, site_id) "
                     + "VALUES (?,?,?,?,?,?,?)");
             stm.setString(1, hdOBJ.getMaHD());
-            stm.setLong(2, hdOBJ.getKhachHang().getId());
+            if (hdOBJ.getKhachHang().getId() != null) {
+                stm.setLong(2, hdOBJ.getKhachHang().getId());
+            } else {
+                stm.setNull(2, java.sql.Types.BIGINT);
+            }
+
             stm.setInt(3, hdOBJ.getTrangThai());
             stm.setDate(4, hdOBJ.getNgayTao());
             stm.setLong(5, hdOBJ.getNguoiTao().getId());
@@ -56,13 +61,13 @@ public class HoaDonDAO {
             Connection conn = SQLServerConnection.getSQLServerConnection();
             Statement stm = conn.createStatement();
             ResultSet rs = stm.executeQuery("SELECT o.code, o.created_date, o.sale_type, o.status, SUM(od.price*od.quantity) as total_price, "
-              + "s.name as chinhanh, c.name as cname, u.name as uname FROM dbo.[order] o \n" +
-                "left join dbo.[customer] c on o.customer_id = c.id \n" +
-                "left join dbo.[user] u on o.created_by = u.id \n" +
-                "left join dbo.[site] s on o.site_id = s.id \n" +
-                "left join dbo.order_detail od on od.order_code = o.code \n" +
-                "where o.code LIKE '%"+input+"%' and o.sale_type = 1\n" +
-                "group by o.code, o.created_date, o.sale_type, o.status, s.name , c.name , u.name ");
+                    + "s.name as chinhanh, c.name as cname, u.name as uname FROM dbo.[order] o \n"
+                    + "left join dbo.[customer] c on o.customer_id = c.id \n"
+                    + "left join dbo.[user] u on o.created_by = u.id \n"
+                    + "left join dbo.[site] s on o.site_id = s.id \n"
+                    + "left join dbo.order_detail od on od.order_code = o.code \n"
+                    + "where o.code LIKE '%" + input + "%' and o.sale_type = 1\n"
+                    + "group by o.code, o.created_date, o.sale_type, o.status, s.name , c.name , u.name ");
 
             while (rs.next()) {
                 HoaDon hdOBJ = new HoaDon();
